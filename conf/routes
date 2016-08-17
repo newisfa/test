@@ -2,10 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 #####UserControllers #####
-#Get    /api/users/:id                                                       UsersController.Get
-POST    /api/users                                                           UsersController.Create
-POST    /api/login                                                           UsersController.Login
-DELETE   /api/users/:id                                                      UsersController.Delete
+Get    /api/users                                                               UsersController.Get
+POST    /api/users                                                               UsersController.Create
+PUT    /api/users/:id                                                           UsersController.Update
+POST    /api/login                                                               UsersController.Login
+DELETE   /api/users/:id                                                          UsersController.Delete
 
 #####AuthorController######
 GET   /api/author                                                             AuthorController.Get

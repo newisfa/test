@@ -62,6 +62,35 @@ func (c UsersController) Login() revel.Result {
 	return c.RenderJson(util.ResponseSuccess(tokenModel))
 }
 
+func (c UsersController) Get()revel.Result {
+	var users []models.User
+	var limitQuery = c.Request.URL.Query().Get("limt");
+	if limitQuery == "" {
+		limitQuery = "0"
+	}
+	var offsetQuery = c.Request.URL.Query().Get("offset");
+
+	if founded := app.Db.Limit(limitQuery).Offset(offsetQuery).Find(&users).RowsAffected; founded < 1 {
+		c.RenderJson(util.ResponseError("Not founded users"))
+	}
+	return c.RenderJson(users)
+}
+
+func (c UsersController) Update() revel.Result  {
+	var update = encoders.EncodeSingleUsers(c.Request.Body)
+	var user models.User
+	var id int
+	c.Params.Bind(&id, "id")
+	if rowsCout := app.Db.First(&user, id).RowsAffected; rowsCout < 1 {
+		return c.RenderJson(util.ResponseError("user Update information Fialed"))
+	}
+
+	if err := app.Db.Model(&user).Updates(&update).Error; err != nil{
+		return c.RenderJson(util.ResponseError("user updates Fialed"))
+	}
+	return c.RenderJson(util.ResponseSuccess(update))
+}
+
 func (c UsersController) Delete() revel.Result {
 	var (
 		id int
@@ -78,3 +107,14 @@ func (c UsersController) Delete() revel.Result {
 	}
 	return c.RenderJson(util.ResponseSuccess(user))
 }
+
+func (c UsersController) Find() revel.Result {
+	var user models.User
+	var id int64
+	c.Params.Bind(&id, "id")
+	if err := app.Db.First(&user, id).Error; err != nil {
+		return c.RenderJson(util.ResponseError("user not founded"))
+	}
+	return c.RenderJson(util.ResponseSuccess(user))
+}
+
